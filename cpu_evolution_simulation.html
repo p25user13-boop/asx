@@ -1,0 +1,163 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:16px 0}
+.title{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.sub{font-size:12px;color:var(--color-text-secondary);margin-bottom:16px}
+.timeline{position:relative;display:flex;align-items:flex-end;gap:4px;height:180px;margin-bottom:12px;padding:0 4px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:0}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:all .3s;position:relative}
+.bar-wrap:hover .bar{filter:brightness(1.15)}
+.bar-wrap.active .bar{filter:brightness(1.25);outline:2px solid var(--color-border-info)}
+.bar-year{font-size:10px;color:var(--color-text-tertiary);writing-mode:vertical-rl;transform:rotate(180deg);margin-top:4px;white-space:nowrap}
+.info-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.metric-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.metric-val{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.metric-unit{font-size:11px;color:var(--color-text-secondary);font-weight:400}
+.chip-name{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.chip-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:12px}
+.moore-bar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.moore-label{font-size:11px;color:var(--color-text-secondary);min-width:80px}
+.moore-track{flex:1;height:6px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.moore-fill{height:100%;border-radius:3px;transition:width .5s}
+.nav{display:flex;gap:8px;align-items:center}
+.nav button{padding:6px 14px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer}
+.nav button:hover{background:var(--color-background-secondary)}
+.nav button:disabled{opacity:0.4;cursor:default}
+.nav-dots{display:flex;gap:4px;margin-left:auto}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--color-border-secondary);cursor:pointer;transition:background .2s}
+.dot.active{background:var(--color-text-secondary)}
+.era-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin-bottom:8px;font-weight:500}
+</style>
+<div class="wrap">
+<div class="title">Симуляція еволюції мікропроцесорів</div>
+<div class="sub">Натисніть на будь-який рік або використовуйте кнопки навігації</div>
+<div class="timeline" id="timeline"></div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+  <div class="chip-name" id="chip-name"></div>
+  <span class="era-badge" id="era-badge"></span>
+</div>
+<div class="chip-desc" id="chip-desc"></div>
+<div class="info-grid" id="info-grid"></div>
+<div style="margin-bottom:10px">
+  <div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Прогрес технологій</div>
+  <div class="moore-bar">
+    <span class="moore-label">Транзистори</span>
+    <div class="moore-track"><div class="moore-fill" id="bar-trans" style="background:#6B5AE8"></div></div>
+    <span style="font-size:11px;color:var(--color-text-tertiary)" id="lbl-trans"></span>
+  </div>
+  <div class="moore-bar">
+    <span class="moore-label">Частота</span>
+    <div class="moore-track"><div class="moore-fill" id="bar-freq" style="background:#1D9E75"></div></div>
+    <span style="font-size:11px;color:var(--color-text-tertiary)" id="lbl-freq"></span>
+  </div>
+  <div class="moore-bar">
+    <span class="moore-label">Техпроцес ↓</span>
+    <div class="moore-track"><div class="moore-fill" id="bar-nm" style="background:#D85A30"></div></div>
+    <span style="font-size:11px;color:var(--color-text-tertiary)" id="lbl-nm"></span>
+  </div>
+</div>
+<div class="nav">
+  <button id="btn-prev" onclick="navigate(-1)">← Назад</button>
+  <button id="btn-next" onclick="navigate(1)">Далі →</button>
+  <div class="nav-dots" id="dots"></div>
+</div>
+</div>
+<script>
+const cpus=[
+  {year:1971,name:"Intel 4004",era:"Перше покоління",color:"#888780",
+   trans:"2 300",freq:"0.74 MHz",nm:"10 000 нм",tdp:"<1 Вт",isa:"4-біт",
+   desc:"Перший комерційний мікропроцесор. Розроблений Тедом Хоффом для японського калькулятора Busicom. 2 300 транзисторів на кристалі 12 мм².",
+   t:2300,f:0.74,n:10000},
+  {year:1978,name:"Intel 8086",era:"x86 народжується",color:"#378ADD",
+   trans:"29 000",freq:"10 MHz",nm:"3 000 нм",tdp:"2 Вт",isa:"16-біт x86",
+   desc:"Заклав основу архітектури x86, яка домінує до сьогодні. Команда сумісності з 8080 забезпечила IBM PC революцію.",
+   t:29000,f:10,n:3000},
+  {year:1985,name:"Intel 386",era:"32-біт ера",color:"#0F6E56",
+   trans:"275 000",freq:"33 MHz",nm:"1 500 нм",tdp:"4 Вт",isa:"32-біт x86",
+   desc:"Перший 32-бітний x86 процесор. Підтримка захищеного режиму та multitasking. Закон Мура підтверджується: транзисторів у 9× більше за 8086.",
+   t:275000,f:33,n:1500},
+  {year:1993,name:"Intel Pentium",era:"Суперскалярна ера",color:"#BA7517",
+   trans:"3 100 000",freq:"133 MHz",nm:"600 нм",tdp:"15 Вт",isa:"x86 + MMX",
+   desc:"Суперскалярна архітектура з двома конвеєрами. Дав народну назву класу ПК. Перше покоління з SIMD-інструкціями MMX.",
+   t:3100000,f:133,n:600},
+  {year:2001,name:"Intel Pentium 4",era:"ГГц-гонка",color:"#E24B4A",
+   trans:"42 000 000",freq:"3 000 MHz",nm:"130 нм",tdp:"75 Вт",isa:"x86-64 + SSE2",
+   desc:"Архітектура NetBurst з 20-стадійним конвеєром. Тактова гонка досягла свого піку. TDP стрімко зростало — початок кризи споживання.",
+   t:42000000,f:3000,n:130},
+  {year:2006,name:"Intel Core 2 Duo",era:"Багатоядерна ера",color:"#534AB7",
+   trans:"291 000 000",freq:"2 930 MHz",nm:"65 нм",tdp:"65 Вт",isa:"x86-64 + SSE4",
+   desc:"Перехід від частотної гонки до багатоядерності. Два ядра на одному кристалі. Ефективніша архітектура Core замінила гарячий NetBurst.",
+   t:291000000,f:2930,n:65},
+  {year:2011,name:"Intel Sandy Bridge i7",era:"Гібридна архітектура",color:"#993556",
+   trans:"1 160 000 000",freq:"3 500 MHz",nm:"32 нм",tdp:"95 Вт",isa:"x86-64 + AVX",
+   desc:"Перший процесор з інтегрованою графікою та AVX-інструкціями. Понад мільярд транзисторів. Підтвердження Закону Мура з темпом кожні 2 роки.",
+   t:1160000000,f:3500,n:32},
+  {year:2017,name:"AMD Ryzen 7 1800X",era:"Ренесанс AMD",color:"#993C1D",
+   trans:"4 800 000 000",freq:"4 000 MHz",nm:"14 нм",tdp:"95 Вт",isa:"x86-64 + AVX2",
+   desc:"Архітектура Zen повернула AMD в конкурентну гру. 8 ядер / 16 потоків за ціною Intel i5. Початок мікроархітектурної еволюції Zen.",
+   t:4800000000,f:4000,n:14},
+  {year:2020,name:"Apple M1",era:"ARM на ПК",color:"#185FA5",
+   trans:"16 000 000 000",freq:"3 200 MHz",nm:"5 нм",tdp:"15 Вт",isa:"ARM64 + AMX",
+   desc:"Революційний перехід Apple від x86 до ARM. SoC-архітектура з 16 млрд транзисторів. У 3× продуктивніший за конкурентів при вдвічі меншому TDP.",
+   t:16000000000,f:3200,n:5},
+  {year:2024,name:"Apple M3 / NVIDIA B200",era:"AI-ера",color:"#3C3489",
+   trans:"92 000 000 000",freq:"4 050 MHz",nm:"3 нм",tdp:"<100 / 700 Вт",isa:"ARM64 / x86+SIMD",
+   desc:"92 млрд транзисторів на 3 нм процесі TSMC. AI-акселератори стають невід'ємною частиною. ExaFLOPS-кластери з NVIDIA Blackwell змінюють індустрію.",
+   t:92000000000,f:4050,n:3}
+];
+let cur=0;
+const fmtT=v=>v>=1e9?(v/1e9).toFixed(1)+" млрд":v>=1e6?(v/1e6).toFixed(1)+" млн":v>=1e3?(v/1e3).toFixed(0)+" тис":v+"";
+function render(){
+  const c=cpus[cur];
+  document.getElementById("chip-name").textContent=c.name+" ("+c.year+")";
+  const badge=document.getElementById("era-badge");
+  badge.textContent=c.era;
+  badge.style.background=c.color+"22";
+  badge.style.color=c.color;
+  document.getElementById("chip-desc").textContent=c.desc;
+  const g=document.getElementById("info-grid");
+  const items=[["Транзистори",c.trans,""],["Частота",c.freq,""],["Техпроцес",c.nm,""],["TDP",c.tdp,""]];
+  g.innerHTML=items.map(([l,v])=>`<div class="metric"><div class="metric-label">${l}</div><div class="metric-val" style="font-size:14px">${v}</div></div>`).join("");
+  const maxT=92e9,maxF=4050,maxNm=10000;
+  const tp=Math.min(100,Math.log10(c.t+1)/Math.log10(maxT+1)*100);
+  const fp=Math.min(100,c.f/maxF*100);
+  const np=Math.min(100,(1-Math.log10(c.n)/Math.log10(maxNm))*100);
+  document.getElementById("bar-trans").style.width=tp+"%";
+  document.getElementById("bar-freq").style.width=fp+"%";
+  document.getElementById("bar-nm").style.width=np+"%";
+  document.getElementById("lbl-trans").textContent=fmtT(c.t);
+  document.getElementById("lbl-freq").textContent=c.f>=1000?(c.f/1000).toFixed(1)+" ГГц":c.f+" МГц";
+  document.getElementById("lbl-nm").textContent=c.nm;
+  document.querySelectorAll(".bar-wrap").forEach((el,i)=>{
+    el.classList.toggle("active",i===cur);
+    const bar=el.querySelector(".bar");
+    const pct=cpus[i];
+    const h=Math.max(8,Math.min(150,Math.log10(pct.t+1)/Math.log10(maxT+1)*150));
+    bar.style.height=h+"px";
+    bar.style.background=i===cur?pct.color:pct.color+"88";
+  });
+  document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("active",i===cur));
+  document.getElementById("btn-prev").disabled=cur===0;
+  document.getElementById("btn-next").disabled=cur===cpus.length-1;
+}
+function navigate(d){cur=Math.max(0,Math.min(cpus.length-1,cur+d));render();}
+const tl=document.getElementById("timeline");
+cpus.forEach((c,i)=>{
+  const w=document.createElement("div");
+  w.className="bar-wrap";
+  w.innerHTML=`<div class="bar"></div><div class="bar-year">${c.year}</div>`;
+  w.onclick=()=>{cur=i;render();};
+  tl.appendChild(w);
+});
+const dots=document.getElementById("dots");
+cpus.forEach((_,i)=>{
+  const d=document.createElement("div");
+  d.className="dot";
+  d.onclick=()=>{cur=i;render();};
+  dots.appendChild(d);
+});
+render();
+</script>

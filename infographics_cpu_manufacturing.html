@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Виробництво процесорів — Матюха Дмитрій</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 24px; }
+  h1 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 6px; color: #1a1a1a; }
+  .subtitle { font-size: 13px; color: #666; text-align: center; margin-bottom: 24px; }
+  .phase-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin: 20px 0 10px; padding-left: 4px; border-left: 3px solid #888; padding-left: 8px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-5 { grid-template-columns: repeat(5, 1fr); }
+  .card { background: #fff; border-radius: 10px; padding: 14px; position: relative; overflow: hidden; border: 1px solid #e0e0e0; }
+  .accent { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .num { font-size: 10px; color: #aaa; margin-bottom: 4px; font-weight: 600; }
+  .ctitle { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #1a1a1a; line-height: 1.3; }
+  .cshort { font-size: 11px; color: #666; line-height: 1.5; }
+  .cdetail { font-size: 11px; color: #555; margin-top: 6px; line-height: 1.5; }
+  .cstats { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .stat { font-size: 10px; background: #f5f5f0; border: 1px solid #e0e0e0; border-radius: 4px; padding: 2px 7px; color: #555; }
+  .moore-box { background: #fff; border-radius: 10px; padding: 16px 20px; border: 1px solid #e0e0e0; margin-top: 20px; }
+  .moore-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .moore-formula { font-size: 16px; font-family: monospace; color: #534AB7; margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+  th { background: #f0f0ea; padding: 6px 10px; text-align: left; font-weight: 600; color: #444; border-bottom: 2px solid #ddd; }
+  td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+  tr:last-child td { border-bottom: none; }
+  .footer { text-align: center; font-size: 11px; color: #aaa; margin-top: 20px; }
+  @media print { body { padding: 10px; } }
+</style>
+</head>
+<body>
+<h1>Виробництво мікропроцесорів: від піску до чіпа</h1>
+<div class="subtitle">12 основних технологічних етапів — Практична робота №1-2, Матюха Дмитрій</div>
+
+<div class="phase-label">Фаза 1 — Підготовка матеріалу</div>
+<div class="grid grid-3">
+  <div class="card"><div class="accent" style="background:#888"></div>
+    <div class="num">Етап 1</div><div class="ctitle">Видобуток кремнію</div>
+    <div class="cshort">Пісок SiO₂ → Si чистота 9N</div>
+    <div class="cdetail">Пісок розплавляють при 1700°C та відновлюють коксом. Чистота 99.9999999% (9N). Кремній — 2-й за поширеністю елемент у корі Землі.</div>
+    <div class="cstats"><span class="stat">Чистота: 9N</span><span class="stat">T: ~1700°C</span><span class="stat">Сировина: кварц</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#185FA5"></div>
+    <div class="num">Етап 2</div><div class="ctitle">Вирощування кристала</div>
+    <div class="cshort">Метод Чохральського, ∅300 мм</div>
+    <div class="cdetail">Монокристалічний злиток витягується з розплаву при ~1420°C з обертанням. Охолодження — 72+ годин. Висота злитку ~2 метри.</div>
+    <div class="cstats"><span class="stat">Діаметр: 300 мм</span><span class="stat">T: 1420°C</span><span class="stat">~1000 пластин</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#1D9E75"></div>
+    <div class="num">Етап 3</div><div class="ctitle">Нарізання пластин</div>
+    <div class="cshort">Алмазна пила, товщина 0.775 мм</div>
+    <div class="cdetail">Злиток нарізають алмазною пилою. Полірування до дзеркальної поверхні (шорсткість &lt;0.1 нм) — критично для фотолітографії.</div>
+    <div class="cstats"><span class="stat">Товщина: 775 мкм</span><span class="stat">Шорсткість: &lt;0.1 нм</span></div>
+  </div>
+</div>
+
+<div class="phase-label">Фаза 2 — Фотолітографія та легування</div>
+<div class="grid grid-4">
+  <div class="card"><div class="accent" style="background:#BA7517"></div>
+    <div class="num">Етап 4</div><div class="ctitle">Нанесення фоторезисту</div>
+    <div class="cshort">Центрифугування, ~0.1 мкм</div>
+    <div class="cdetail">Центрифугування при 3000 об/хв. Шар рівномірний до 1 нм. Запікання при 90°C для фіксації.</div>
+    <div class="cstats"><span class="stat">3000 об/хв</span><span class="stat">Шар: 0.1 мкм</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#534AB7"></div>
+    <div class="num">Етап 5</div><div class="ctitle">Фотолітографія EUV</div>
+    <div class="cshort">ASML, λ=13.5 нм, ±0.5 нм</div>
+    <div class="cdetail">EUV-сканер ASML проектує схему через маску. Формує структури до 2-3 нм. Один сканер коштує &gt;$150 млн.</div>
+    <div class="cstats"><span class="stat">λ: 13.5 нм</span><span class="stat">ASML: $170 млн</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#D85A30"></div>
+    <div class="num">Етап 6</div><div class="ctitle">Травлення</div>
+    <div class="cshort">Реактивне іонне (RIE)</div>
+    <div class="cdetail">Плазма SF₆/Cl₂ видаляє оголені ділянки кремнію. Формує наноструктури транзисторів з точністю ±1 нм.</div>
+    <div class="cstats"><span class="stat">Метод: RIE</span><span class="stat">Точність: ±1 нм</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#3B6D11"></div>
+    <div class="num">Етап 7</div><div class="ctitle">Іонна імплантація</div>
+    <div class="cshort">Легування B/P/As, 10-500 кеВ</div>
+    <div class="cdetail">Іони бору (p-тип) або фосфору (n-тип) бомбардують кремній, надаючи провідних властивостей. Відпал при 1000°C.</div>
+    <div class="cstats"><span class="stat">Іони: B, P, As</span><span class="stat">Відпал: 1000°C</span></div>
+  </div>
+</div>
+
+<div class="phase-label">Фаза 3 — Металізація та пакування</div>
+<div class="grid grid-5">
+  <div class="card"><div class="accent" style="background:#633806"></div>
+    <div class="num">Етап 8</div><div class="ctitle">Металізація</div>
+    <div class="cshort">Мідь CVD/PVD, до 15 шарів</div>
+    <div class="cdetail">Мідні провідники з'єднують транзистори. До 15 металевих шарів (Back-End Of Line).</div>
+    <div class="cstats"><span class="stat">Метал: мідь</span><span class="stat">15 шарів</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#A32D2D"></div>
+    <div class="num">Етап 9</div><div class="ctitle">Тест пластини</div>
+    <div class="cshort">Зондова станція, Yield 50-90%</div>
+    <div class="cdetail">Автоматична перевірка кожного чіпа. Несправні відмічаються. Тест займає 3-10 с/чіп.</div>
+    <div class="cstats"><span class="stat">Yield: 50-90%</span><span class="stat">3-10 с/чіп</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#444441"></div>
+    <div class="num">Етап 10</div><div class="ctitle">Різка (Dicing)</div>
+    <div class="cshort">Лазер або алмазна пила</div>
+    <div class="cdetail">Пластину нарізають за лініями скрайбування. Кристали сортують за частотним потенціалом (binning).</div>
+    <div class="cstats"><span class="stat">Пропил: 50 мкм</span><span class="stat">Binning</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#0C447C"></div>
+    <div class="num">Етап 11</div><div class="ctitle">Пакування</div>
+    <div class="cshort">Flip-chip, LGA/BGA корпус</div>
+    <div class="cdetail">Кристал паяється до підложки flip-chip методом. Наноситься IHS-теплорозподілювач (мідь/нікель).</div>
+    <div class="cstats"><span class="stat">Flip-chip</span><span class="stat">IHS: мідь</span></div>
+  </div>
+  <div class="card"><div class="accent" style="background:#3C3489"></div>
+    <div class="num">Етап 12</div><div class="ctitle">Фінальне тестування</div>
+    <div class="cshort">Burn-in 24-48 год, T=80°C</div>
+    <div class="cdetail">Функціональний тест всіх інструкцій, IDDQ-тест на витоки струму та burn-in при 80°C протягом 24-48 год.</div>
+    <div class="cstats"><span class="stat">Burn-in: 24-48 год</span><span class="stat">IDDQ тест</span></div>
+  </div>
+</div>
+
+<div class="moore-box">
+  <div class="moore-title">Закон Мура та прогрес техпроцесів</div>
+  <div class="moore-formula">N(t) = N₀ × 2^(t/2)</div>
+  <div style="font-size:12px;color:#666;margin-bottom:10px">Кількість транзисторів подвоюється кожні ~2 роки. Від 2 300 (1971) до 92 млрд (2024) — зростання у 40 000 000 разів.</div>
+  <table>
+    <tr><th>Рік</th><th>Процесор</th><th>Техпроцес</th><th>Транзисторів</th><th>Виробник</th></tr>
+    <tr><td>1971</td><td>Intel 4004</td><td>10 000 нм</td><td>2 300</td><td>Intel</td></tr>
+    <tr><td>1993</td><td>Intel Pentium</td><td>600 нм</td><td>3 100 000</td><td>Intel</td></tr>
+    <tr><td>2011</td><td>Sandy Bridge i7</td><td>32 нм</td><td>1 160 000 000</td><td>Intel</td></tr>
+    <tr><td>2020</td><td>Apple M1</td><td>5 нм</td><td>16 000 000 000</td><td>TSMC</td></tr>
+    <tr><td>2024</td><td>Apple M3 / NVIDIA B200</td><td>3 нм</td><td>92 000 000 000</td><td>TSMC</td></tr>
+    <tr><td>2026 (прогноз)</td><td>Наступне покоління</td><td>2 нм</td><td>~320 000 000 000</td><td>TSMC N2</td></tr>
+  </table>
+</div>
+
+<div class="footer">Практична робота №1-2 | Матюха Дмитрій | 2024 | Виробництво мікропроцесорів</div>
+</body>
+</html>
